@@ -1,0 +1,49 @@
+MATLAB 26.1.0.3346908 (R2026a) Update 5
+
+1D demonstration x = [3 5 2 2.5], L = 3
+Kernel indices: -2 -1 0 1 2 
+Kernel values:  0.33333333 0.66666667 1 0.66666667 0.33333333 
+    n        y   
+    __    _______
+
+    -2          1
+    -1          2
+     0          3
+     1     3.6667
+     2     4.3333
+     3          5
+     4          4
+     5          3
+     6          2
+     7     2.1667
+     8     2.3333
+     9        2.5
+    10     1.6667
+    11    0.83333
+
+
+Independent algorithm checks
+  1D hand-calculated sequence                                  error = 8.88e-16  true
+  1D independent interp1 reference                             error = 8.88e-16  true
+  1D original samples and kernel gain                          error = 4.44e-16  true
+  2D hand-calculated 2-by-2 plane including borders            error = 2.84e-14  true
+  Constant image including four borders                        error = 0  true
+  2D interp2 reference L=1                                     error = 0  true
+  2D interp2 reference L=2                                     error = 0  true
+  2D interp2 reference L=3                                     error = 1.07e-14  true
+  2D interp2 reference L=4                                     error = 0  true
+  Affine-plane exactness inside original domain                error = 1.07e-14  true
+  Single-pixel image boundary handling                         error = 1.42e-14  true
+  Single-row image                                             error = 0  true
+  Single-column image                                          error = 1.78e-15  true
+  RGB channels processed independently                         error = 8.53e-14  true
+  Separable convolution versus full 2D convolution             error = 2.22e-16  true
+  No overshoot for checkerboard input                          error = 5.68e-14  true
+Validation: 16/16 tests PASS (tolerance 1.0e-10).
+
+Source: 216 x 212; result: 648 x 636 (H x W).
+Original-sample max error: 0
+Independent interp2 max error: 3.6664e-12; RMSE: 2.69966e-13
+PNG quantization max error: 0.444444 gray levels
+Convolution elapsed: 0.0111527 seconds (single run, not a benchmark).
+ALL CHECKS PASSED. Results folder: D:\Users\inmu\Desktop\Uni\XXdzy\工程设计题6. 上采样\results
