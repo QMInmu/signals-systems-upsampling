@@ -167,6 +167,55 @@ scaleTable = table(scales(:), rowsOut, colsOut, gains, sampleErr, ...
     'VariableNames', {'L', 'height', 'width', 'kernel_sum', 'anchor_max_error'});
 writetable(scaleTable, fullfile(resultDir, 'scale_metrics.csv'));
 
+% 原图作真值：先隔点抽取再放大回原尺寸，比较 L 与方法对误差和边缘跳变的影响。
+rmseOf = @(A, B) sqrt(mean((A(:)-B(:)).^2));
+psnrOf = @(e) 10*log10(255^2/e^2);
+maxJump = @(A) max([max(abs(diff(A, 1, 1)), [], 'all'), max(abs(diff(A, 1, 2)), [], 'all')]);
+psnrBilinear = zeros(3, 1); psnrNearest = psnrBilinear;
+psnrBilinearROI = psnrBilinear; psnrNearestROI = psnrBilinear;
+jumpBilinear = psnrBilinear; jumpNearest = psnrBilinear;
+for k = 1:numel(scales)
+    s = scales(k);
+    D = I(1:s:end, 1:s:end);                  % 不加抗混叠滤波的隔点抽取
+    Ybi = bilinear_upsample_conv(D, s);
+    Ybi = Ybi(1:H, 1:W);
+    Ynn = kron(D, ones(s));
+    Ynn = Ynn(1:H, 1:W);
+    psnrBilinear(k) = psnrOf(rmseOf(Ybi, I));
+    psnrNearest(k) = psnrOf(rmseOf(Ynn, I));
+    psnrBilinearROI(k) = psnrOf(rmseOf(Ybi(roiRows, roiCols), I(roiRows, roiCols)));
+    psnrNearestROI(k) = psnrOf(rmseOf(Ynn(roiRows, roiCols), I(roiRows, roiCols)));
+    % 直接放大原图时，条纹区内相邻输出像素的最大灰度跳变。
+    rr = s*(roiRows(1)-1)+(1:s*numel(roiRows));
+    cc = s*(roiCols(1)-1)+(1:s*numel(roiCols));
+    Ys = bilinear_upsample_conv(I, s);
+    Yk = kron(I, ones(s));
+    jumpBilinear(k) = maxJump(Ys(rr, cc));
+    jumpNearest(k) = maxJump(Yk(rr, cc));
+end
+qualityTable = table(scales(:), psnrBilinear, psnrNearest, psnrBilinearROI, psnrNearestROI, ...
+    jumpBilinear, jumpNearest, 'VariableNames', {'L', 'psnr_bilinear_db', 'psnr_nearest_db', ...
+    'psnr_bilinear_roi_db', 'psnr_nearest_roi_db', 'max_jump_bilinear', 'max_jump_nearest'});
+writetable(qualityTable, fullfile(resultDir, 'scale_quality_metrics.csv'));
+disp(qualityTable);
+
+colorBilinear = [0.76 0.25 0.05];
+colorNearest = [0.15 0.39 0.66];
+fig7 = figure('Color', 'w', 'Position', [220 220 1000 400]);
+subplot(1, 2, 1);
+plot(scales, psnrBilinearROI, 'o-', 'Color', colorBilinear, 'LineWidth', 2, 'MarkerFaceColor', colorBilinear); hold on;
+plot(scales, psnrNearestROI, 's-', 'Color', colorNearest, 'LineWidth', 2, 'MarkerFaceColor', colorNearest);
+grid on; xticks(scales); xlim([1.8 4.2]);
+xlabel('L'); ylabel('PSNR (dB)'); title('Stripe region: decimate, upsample, compare');
+legend('Bilinear', 'Nearest neighbor', 'Location', 'northeast');
+subplot(1, 2, 2);
+plot(scales, jumpBilinear, 'o-', 'Color', colorBilinear, 'LineWidth', 2, 'MarkerFaceColor', colorBilinear); hold on;
+plot(scales, jumpNearest, 's-', 'Color', colorNearest, 'LineWidth', 2, 'MarkerFaceColor', colorNearest);
+grid on; xticks(scales); xlim([1.8 4.2]); ylim([0 270]);
+xlabel('L'); ylabel('Gray levels'); title('Largest step between adjacent output pixels');
+legend('Bilinear', 'Nearest neighbor', 'Location', 'east');
+save_light_figure(fig7, resultDir, '07_parameter_analysis', 160);
+
 %% 5. 保存可复核的数值、指标和验证记录
 metrics = struct;
 metrics.matlab_version = version;
@@ -199,13 +248,13 @@ fclose(fid);
 writetable(struct2table(checks), fullfile(resultDir, 'test_results.csv'));
 save(fullfile(resultDir, 'experiment_data.mat'), ...
     'I', 'Y', 'Y8', 'nearest', 'x', 'y', 'n', 'w', 'nw', 'f', 'nf', 'F', ...
-    'metrics', 'checks', 'scaleTable');
+    'metrics', 'checks', 'scaleTable', 'qualityTable');
 fprintf('\nSource: %d x %d; result: %d x %d (H x W).\n', H, W, size(Y, 1), size(Y, 2));
 fprintf('Original-sample max error: %.6g\n', anchorError);
 fprintf('Independent interp2 max error: %.6g; RMSE: %.6g\n', referenceError, referenceRMSE);
 fprintf('PNG quantization max error: %.6g gray levels\n', quantizationError);
 fprintf('Convolution elapsed: %.6g seconds (single run, not a benchmark).\n', elapsed);
-fprintf('ALL CHECKS PASSED. Results folder: %s\n', resultDir);
+fprintf('ALL CHECKS PASSED. Results folder: results\n');
 diary off;
 clear diaryCleanup;
 

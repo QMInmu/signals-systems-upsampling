@@ -12,7 +12,7 @@
 
 1. 克隆或下载本仓库，保持文件在同一目录。
 2. 在 MATLAB 中打开 `main_upsampling.m`，按 F5。
-3. 命令窗口应显示 `16/16 tests PASS` 和 `ALL CHECKS PASSED`，结果写入 `results/`。
+3. 命令窗口应显示 `19/19 tests PASS` 和 `ALL CHECKS PASSED`，结果写入 `results/`。
 
 只跑测试：
 
@@ -29,8 +29,9 @@ checks = test_upsampling();
 | `main_upsampling.m` | 主程序，生成全部图表、数值和验证记录 |
 | `linear_upsample_1d.m` | 一维插零与完整卷积 |
 | `bilinear_upsample_conv.m` | 二维插零与可分离卷积 |
-| `test_upsampling.m` | 16 项数值验证 |
+| `test_upsampling.m` | 19 项数值验证 |
 | `上采样实现说明.md` | 推导、代码逐行说明、结果和答辩要点 |
+| `第十组_上采样中期汇报.pptx` | 五分钟中期汇报 |
 | `results/` | 运行结果，最终图像是 `zebra_3x_bilinear.png` |
 
 重新运行会覆盖 `results/` 中的同名文件，即使数值没变，git 也会把其中大部分文件显示为已修改（PNG 的像素相同，文件字节不同）。没有改算法或绘图时，用 `git restore results` 撤销即可，不必提交。

@@ -12,6 +12,11 @@ ref1 = interp1([-3 0 3 6 9 12], [0 3 5 2 2.5 0], n, 'linear');
 checks(end+1) = check('1D independent interp1 reference', y, ref1, tol);
 checks(end+1) = check('1D original samples and kernel gain', ...
     [y(ismember(n, [0 3 6 9])), sum(f)], [3 5 2 2.5 3], tol);
+for L = [1 2 4]
+    [y, n] = linear_upsample_1d([3 5 2 2.5], L);
+    ref1 = interp1(L*(-1:4), [0 3 5 2 2.5 0], n, 'linear');
+    checks(end+1) = check(sprintf('1D interp1 reference L=%d', L), y, ref1, tol);
+end
 
 Y = bilinear_upsample_conv([0 30; 60 90], 3);
 q = min((0:5)/3, 1);

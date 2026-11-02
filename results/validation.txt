@@ -26,6 +26,9 @@ Independent algorithm checks
   1D hand-calculated sequence                                  error = 8.88e-16  true
   1D independent interp1 reference                             error = 8.88e-16  true
   1D original samples and kernel gain                          error = 4.44e-16  true
+  1D interp1 reference L=1                                     error = 0  true
+  1D interp1 reference L=2                                     error = 0  true
+  1D interp1 reference L=4                                     error = 0  true
   2D hand-calculated 2-by-2 plane including borders            error = 2.84e-14  true
   Constant image including four borders                        error = 0  true
   2D interp2 reference L=1                                     error = 0  true
@@ -39,11 +42,18 @@ Independent algorithm checks
   RGB channels processed independently                         error = 8.53e-14  true
   Separable convolution versus full 2D convolution             error = 2.22e-16  true
   No overshoot for checkerboard input                          error = 5.68e-14  true
-Validation: 16/16 tests PASS (tolerance 1.0e-10).
+Validation: 19/19 tests PASS (tolerance 1.0e-10).
+    L    psnr_bilinear_db    psnr_nearest_db    psnr_bilinear_roi_db    psnr_nearest_roi_db    max_jump_bilinear    max_jump_nearest
+    _    ________________    _______________    ____________________    ___________________    _________________    ________________
+
+    2         20.777             16.502                16.479                  12.69                  117                 234       
+    3         17.158             13.189                 12.73                 8.6816                   78                 234       
+    4         15.116             11.846                9.9418                 6.7532                 58.5                 234       
+
 
 Source: 216 x 212; result: 648 x 636 (H x W).
 Original-sample max error: 0
 Independent interp2 max error: 3.6664e-12; RMSE: 2.69966e-13
 PNG quantization max error: 0.444444 gray levels
-Convolution elapsed: 0.0111527 seconds (single run, not a benchmark).
-ALL CHECKS PASSED. Results folder: D:\Users\inmu\Desktop\Uni\XXdzy\工程设计题6. 上采样\results
+Convolution elapsed: 0.0282999 seconds (single run, not a benchmark).
+ALL CHECKS PASSED. Results folder: results

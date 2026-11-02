@@ -30,8 +30,8 @@
   "input_max": 255,
   "output_min": 0,
   "output_max": 255.00000000000009,
-  "convolution_elapsed_seconds": 0.0111527,
-  "test_count": 16,
-  "tests_passed": 16,
+  "convolution_elapsed_seconds": 0.0282999,
+  "test_count": 19,
+  "tests_passed": 19,
   "coordinate_convention": "origin-aligned: (output_index-1)/L, clamped to last source pixel"
 }

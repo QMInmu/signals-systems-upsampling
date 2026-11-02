@@ -2,6 +2,9 @@ name,max_abs_error,passed
 1D hand-calculated sequence,8.88178419700125e-16,1
 1D independent interp1 reference,8.88178419700125e-16,1
 1D original samples and kernel gain,4.44089209850063e-16,1
+1D interp1 reference L=1,0,1
+1D interp1 reference L=2,0,1
+1D interp1 reference L=4,0,1
 2D hand-calculated 2-by-2 plane including borders,2.8421709430404e-14,1
 Constant image including four borders,0,1
 2D interp2 reference L=1,0,1
